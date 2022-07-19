@@ -14,8 +14,10 @@ ImageGalleryItem.propTypes = {
     image:
         PropTypes.shape({
             id: PropTypes.number.isRequired,
-            webformatURL: PropTypes.string.isRequired
-        })
+            webformatURL: PropTypes.string.isRequired,
+            largeImageURL: PropTypes.string.isRequired
+        }),
+    onImageClick: PropTypes.func.isRequired
 }
 
 export default ImageGalleryItem;

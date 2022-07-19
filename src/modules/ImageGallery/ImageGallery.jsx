@@ -1,6 +1,7 @@
 import styles from "./imageGallery.module.css"
 import ImageGalleryItem from "modules/ImageGallery/ImageGalleryItem";
 import {Component} from "react"
+import PropTypes from "prop-types"
 
 class  ImageGallery extends Component {
     render(){
@@ -14,6 +15,15 @@ class  ImageGallery extends Component {
             </ul>
         )
     }
+}
+
+ImageGallery.defaultProps = {
+    items: [],
+    onClick: ()=>{},
+}
+ImageGallery.propTypes = {
+    items: PropTypes.array.isRequired,
+    onClick: PropTypes.func.isRequired,
 }
 
 export default ImageGallery;

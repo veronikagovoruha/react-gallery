@@ -16,7 +16,8 @@ export default class App extends Component{
         loading: false,
         totalHits: 0,
         modalOpen: false,
-        modalContent: {}
+        modalContent: {},
+        buttonText: "Load more"
     }
 
     componentDidUpdate(prevProps, prevState){
@@ -86,13 +87,17 @@ export default class App extends Component{
 
     render(){
         const {changeSearch, changePage, canLoadMore, closeModal, showModal} = this;
-        const {images, loading, modalOpen, modalContent: {largeImageURL}} = this.state;
+        const {images, loading, modalOpen, modalContent: {largeImageURL}, buttonText} = this.state;
         return (
             <>
-                {modalOpen && <Modal close={closeModal} largeImageURL={largeImageURL}/>}
+                {modalOpen && 
+                    <Modal close={closeModal}>
+                        <img src={largeImageURL} alt="" width="900"/>
+                    </Modal>
+                }
                <Searchbar onSubmit={changeSearch}/>
                <ImageGallery images={images} onImageClick={showModal}/> 
-               {canLoadMore() && <Button onClick={changePage}/>} 
+               {canLoadMore() && <Button onClick={changePage} buttonText={buttonText}/>} 
                {loading && <Loader />}
             </>
         )
