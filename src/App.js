@@ -2,7 +2,7 @@ import { Component } from 'react';
 import ImageGallery from 'modules/ImageGallery';
 import Searchbar from 'modules/Searchbar';
 import { searchImages } from "./shared/services/getImages"
-import Button from 'modules/Button';
+import Button from 'shared/components/Button';
 import Modal from 'shared/components/Modal';
 import Loader from 'shared/components/Loader';
 

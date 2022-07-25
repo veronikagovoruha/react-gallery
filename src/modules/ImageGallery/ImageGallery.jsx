@@ -18,12 +18,16 @@ class  ImageGallery extends Component {
 }
 
 ImageGallery.defaultProps = {
-    items: [],
-    onClick: ()=>{},
+    images: [],
+    onImageClick: ()=>{},
 }
 ImageGallery.propTypes = {
-    items: PropTypes.array.isRequired,
-    onClick: PropTypes.func.isRequired,
+    images: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        webformatURL: PropTypes.string.isRequired,
+        largeImageURL: PropTypes.string.isRequired
+    })),
+    onImageClick: PropTypes.func.isRequired,
 }
 
 export default ImageGallery;
