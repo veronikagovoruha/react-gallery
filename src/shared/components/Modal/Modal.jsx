@@ -8,11 +8,11 @@ const modalEl = document.getElementById('modal-root');
 function Modal({ closeModal, children }) {
   
   useEffect(() => {
-    window.addEventListener("keydown", handleClose);
+    window.addEventListener("keydown", this.handleClose);
   }, []);
   useEffect(() => {
     return () => {
-      window.removeEventListener("keydown", handleClose);
+      window.removeEventListener("keydown", this.handleClose);
     };
   }, []);
 
@@ -25,6 +25,7 @@ function Modal({ closeModal, children }) {
       closeModal();
     }
   }
+  
   return createPortal(
       (<div className={styles.Overlay} onClick={handleClose}>
         <div className={styles.Modal}>
