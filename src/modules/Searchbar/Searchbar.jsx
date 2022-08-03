@@ -34,9 +34,10 @@ function Searchbar() {
           if (page === 1) {
             setItems(hits);
             setTotal(totalHits);
+          } else {
+            setItems(prevState => ([...prevState, ...hits]));
           }
-          setItems(prevState => ([...prevState, ...hits]));
-          setTotal(totalHits);
+          
           
       }
       catch (error) {

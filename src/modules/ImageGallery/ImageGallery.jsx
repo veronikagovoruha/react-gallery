@@ -5,11 +5,13 @@ import ImageGalleryItem from 'modules/ImageGallery/ImageGalleryItem';
 import styles from './imageGallery.module.css';
 
 function ImageGallery({items, onClick}) {
-    const images = items.map(({ id, webformatURL, tags, largeImageURL }) => <ImageGalleryItem key={id} url={webformatURL} tags={tags} onClick={onClick} largeImageURL={largeImageURL} />)
+    const images = items.map(({ id, webformatURL, tags, largeImageURL }) => 
+        <ImageGalleryItem key={id} url={webformatURL} tags={tags} onClick={onClick} largeImageURL={largeImageURL} />
+    )
     
     return (
         <ul className={styles.ImageGallery}>
-        {images}
+            {images}
         </ul>
     )
 }
