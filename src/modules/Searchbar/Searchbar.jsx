@@ -1,54 +1,104 @@
-import styles from "./searchbar.module.css"
-import { Component } from "react";
-import PropTypes from "prop-types"
+import { useState, useEffect, useRef,useCallback } from 'react';
 
-class Searchbar extends Component{
-    state = {
-        search: ""
+import SearchForm from './SearchForm';
+import ImageGallery from 'modules/ImageGallery';
+import Loader from 'shared/components/Loader';
+import Button from 'modules/Button';
+import Modal from 'shared/components/Modal';
+
+import { getImagesList } from 'shared/services/api/getImages';
+
+function Searchbar() {
+  const [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({});
+  
+  const firstRender = useRef(true);
+
+  useEffect(() => {
+    async function fetchProductsList() {
+      setLoading(true);
+      setError(false);
+
+      try {
+        const { data } = await getImagesList(query, page);
+        const { totalHits, hits } = data;
+
+          if (page === 1) {
+            setItems(hits);
+            setTotal(totalHits);
+          }
+          setItems(prevState => ([...prevState, ...hits]));
+          setTotal(totalHits);
+          
+      }
+      catch (error) {
+        setError(true);
+      }
+      finally {
+        setLoading(false);
+      }
     }
-
-    handleSubmit = (e) => {
-        e.preventDefault();
-        const {onSubmit} = this.props;
-        onSubmit({...this.state});
-        this.setState({
-            search: ""
-        })
+    // query && fetchProductsList();
+    if (!firstRender.current) {
+      fetchProductsList();
     }
-
-    handleChange = ({target}) => {
-        const {name, value} = target;
-        this.setState({
-            [name]: value
-        })
+    else {
+      firstRender.current = false;
     }
-
-    render(){
-        const {handleSubmit, handleChange } = this;
-        return (
-            <header className={styles.Searchbar}>
-                <form className={styles.SearchForm} onSubmit={handleSubmit}>
-                    <button type="submit" className={styles.SearchFormButton}>
-                    <span className={styles.SearchFormButtonLabel}>Search</span>
-                    </button>
     
-                    <input
-                    className={styles.SearchFormInput}
-                    onChange={handleChange}
-                    name="search"
-                    type="text"
-                    autoComplete="off"
-                    autoFocus
-                    placeholder="Search images and photos"
-                    />
-                </form>
-            </header>
-        )
-    }
-}
+  }, [page, query])
+  
 
-Searchbar.propTypes = {
-    onSubmit: PropTypes.func.isRequired
+  const setSearchQuery = useCallback(({ query }) => {
+    setQuery(prevState => {
+      if (prevState.query !== query) {
+        setPage(1);
+        setItems([]);
+        return query
+      }
+    })
+  }, [setItems])
+
+  function loadMore() {
+    setPage(page + 1);
+  }
+  const getImgObj = useCallback(({ largeImageURL, tags }) =>
+  {
+    setModalOpen(true);
+    setModalContent({ largeImageURL, tags })   
+  }, [setModalContent])
+
+  function closeModal() {
+    setModalOpen(false);
+  }
+    
+  const { largeImageURL, tags } = modalContent;
+  return(
+    <>
+      {modalOpen && (
+        <Modal closeModal={closeModal}>
+          <img src={largeImageURL} alt={tags} width="900" />
+        </Modal>
+      )}
+
+      <SearchForm onSubmit={setSearchQuery} />
+      {error && <p>Не удалось загрузить посты</p>}
+      {loading && <Loader />}
+
+      <ImageGallery items={items} onClick={getImgObj} />
+      {!loading && items.length >= 12 && page * 12 <= total && (
+        <Button loadMore={loadMore} />
+      )}
+    </>
+  );
 }
 
 export default Searchbar;

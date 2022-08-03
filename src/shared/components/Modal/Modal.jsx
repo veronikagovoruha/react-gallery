@@ -1,54 +1,46 @@
-import {createPortal} from "react-dom"
+import {useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
-import styles from "./modal.module.css"
-import { Component } from "react";
+import styles from './modal.module.css';
 
-const modalRoot = document.getElementById("modal-root");
+const modalEl = document.getElementById('modal-root');
 
-class Modal extends Component {
-    componentDidMount(){
-        document.addEventListener("keydown",this.handleClose )
+function Modal({ closeModal, children }) {
+  
+  useEffect(() => {
+    window.addEventListener("keydown", handleClose);
+  }, []);
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("keydown", handleClose);
+    };
+  }, []);
+
+  function handleClose(e) {
+    if (e.target === e.currentTarget) {
+      closeModal();
+      return;
     }
-
-    componentWillUnmount(){
-        document.removeEventListener("keydown", this.handleClose)
+    if (e.code === "Escape") {
+      closeModal();
     }
-
-    handleClose = (e) => {
-        if(e.target === e.currentTarget){
-            this.props.close();
-            return
-        }
-        if(e.code === "Escape"){
-            this.props.close();
-        }
-    }
-
-    render(){
-        const{ children } = this.props;
-        const {handleClose} = this;
-        return (
-            createPortal(
-                (
-                
-                <div className={styles.Overlay} onClick={handleClose}>
-                    <div className={styles.Modal}>
-                        {children}
-                    </div>
-                </div>
-                ),
-                modalRoot
-            )
-        )
-    }
+  }
+  return createPortal(
+      (<div className={styles.Overlay} onClick={handleClose}>
+        <div className={styles.Modal}>
+          {children}
+        </div>
+      </div>
+      ), modalEl
+    );
 }
 
 Modal.defaultProps = {
-    closeModal: ()=>{},
-  }
+  closeModal: ()=>{},
+}
 Modal.propTypes = {
-    closeModal: PropTypes.func.isRequired,
-    children: PropTypes.node,
+  closeModal: PropTypes.func.isRequired,
+  children: PropTypes.node,
 }
 
 export default Modal;

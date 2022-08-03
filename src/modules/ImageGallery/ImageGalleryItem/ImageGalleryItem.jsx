@@ -1,23 +1,19 @@
-import styles from "./imageGalleryItem.module.css"
-import PropTypes from "prop-types"
+import { memo } from "react";
 
-const ImageGalleryItem = ({ image, onImageClick }) => {
-    const {id, webformatURL, largeImageURL} = image;
-    return (
-        <li key={id} className={styles.ImageGalleryItem}>
-            <img onClick={() => onImageClick({largeImageURL})} src={webformatURL} className={styles.ImageGalleryItemImage} alt="" />
-        </li>
-    );
+import PropTypes from 'prop-types';
+import styles from './imageGalleryItem.module.css';
+
+function ImageGalleryItem({url, tags,largeImageURL, onClick}) {
+  return (
+    <li className={styles.ImageGalleryItem} onClick={()=>onClick({largeImageURL, tags})}>
+    <img className={styles[`ImageGalleryItem-image`]} src={url} alt={tags} />
+    </li>
+  );
 }
-
 ImageGalleryItem.propTypes = {
-    image:
-        PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            webformatURL: PropTypes.string.isRequired,
-            largeImageURL: PropTypes.string.isRequired
-        }),
-    onImageClick: PropTypes.func.isRequired
+  url: PropTypes.string.isRequired,
+  tags: PropTypes.string, 
+  largeImageURL: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 }
-
-export default ImageGalleryItem;
+export default memo(ImageGalleryItem);
