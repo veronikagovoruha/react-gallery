@@ -56,17 +56,20 @@ function Searchbar() {
     }
     
   }, [page, query])
+
+  useEffect(() => {
+      setPage(1);
+      setItems([]);
+  }, [query])
   
 
   const setSearchQuery = useCallback(({ query }) => {
     setQuery(prevState => {
       if (prevState.query !== query) {
-        setPage(1);
-        setItems([]);
         return query
       }
     })
-  }, [setItems])
+  }, [])
 
   function loadMore() {
     setPage(page + 1);

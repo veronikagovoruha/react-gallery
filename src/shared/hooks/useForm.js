@@ -5,8 +5,11 @@ export function useForm({ onSubmit, initialStateForm, isReset }){
 
   function handleChange({ target }){
     const { name, value } = target;
-    setForm({
-      [name]: value,
+    setForm(prevState => {
+      return {
+        ...prevState,
+        [name]: value
+      }
     });
   };
 
