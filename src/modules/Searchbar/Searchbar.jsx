@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef,useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import SearchForm from './SearchForm';
 import ImageGallery from 'modules/ImageGallery';
@@ -20,56 +20,48 @@ function Searchbar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({});
   
-  const firstRender = useRef(true);
+  // const firstRender = useRef(true);
 
-  useEffect(() => {
-    async function fetchProductsList() {
-      setLoading(true);
-      setError(false);
+  const fetchProductsList = useCallback(async (page, query) => {
+    setLoading(true);
+    setError(false);
 
-      try {
-        const { data } = await getImagesList(query, page);
-        const { totalHits, hits } = data;
+    try {
+      const { data } = await getImagesList(query, page);
+      const { totalHits, hits } = data;
 
-          if (page === 1) {
-            setItems(hits);
-            setTotal(totalHits);
-          } else {
-            setItems(prevState => ([...prevState, ...hits]));
-          }
-          
-          
-      }
-      catch (error) {
-        setError(true);
-      }
-      finally {
-        setLoading(false);
-      }
+        if (page === 1) {
+          setItems(hits);
+          setTotal(totalHits);
+        } else {
+          setItems(prevState => ([...prevState, ...hits]));
+          setTotal(totalHits);
+        }
+        
+        
     }
-    // query && fetchProductsList();
-    if (!firstRender.current) {
-      fetchProductsList();
+    catch (error) {
+      setError(true);
     }
-    else {
-      firstRender.current = false;
+    finally {
+      setLoading(false);
     }
     
-  }, [page, query])
+  }, []);
 
   useEffect(() => {
-      setPage(1);
-      setItems([]);
-  }, [query])
-  
+    fetchProductsList(page, query)
+  }, [fetchProductsList, page, query]);
 
   const setSearchQuery = useCallback(({ query }) => {
-    setQuery(prevState => {
-      if (prevState.query !== query) {
+    setQuery(prevQuery => {
+      if (prevQuery !== query) {
         return query
       }
     })
-  }, [])
+    setPage(1);
+    setItems([]);
+  }, []);
 
   function loadMore() {
     setPage(page + 1);
@@ -78,7 +70,7 @@ function Searchbar() {
   {
     setModalOpen(true);
     setModalContent({ largeImageURL, tags })   
-  }, [setModalContent])
+  }, [])
 
   function closeModal() {
     setModalOpen(false);
